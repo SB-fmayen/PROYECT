@@ -1,0 +1,24 @@
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background: #1c1f26;
+  color: white;
+
+  .nav-link {
+    color: #bbb;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+
+    &:hover,
+    &.active {
+      background-color: #28a745;
+      color: white;
+    }
+  }
+}
+
+.content {
+  background: linear-gradient(135deg, #0f0f0f, #004d00);
+  color: white;
+  min-height: 100vh;
+}

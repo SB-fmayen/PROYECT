@@ -1,0 +1,37 @@
+<div class="d-flex">
+  <!-- Menú lateral -->
+  <div class="sidebar p-3 text-white">
+    <h4 class="mb-4">📊 Dashboard</h4>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link text-white" (click)="toggleSection('users')">👤 Usuarios</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" (click)="toggleSection('sales')">💰 Ventas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" (click)="toggleSection('products')">📦 Productos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" (click)="toggleSection('customers')">👥 Clientes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" (click)="toggleSection('employees')">🧑‍💼 Empleados</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" (click)="toggleSection('categories')">🏷️ Categorías</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" (click)="toggleSection('regions')">🗺️ Regiones</a>
+      </li>
+      <li class="nav-item mt-4">
+        <button class="btn btn-danger w-100" (click)="logout()">Cerrar sesión</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Contenido -->
+  <div class="content p-4 flex-grow-1">
+    <router-outlet></router-outlet>
+  </div>
+</div>

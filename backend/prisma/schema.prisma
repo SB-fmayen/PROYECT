@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model calendar {
+  date      DateTime @id
+  dayOfWeek String
+  month     Int
+  quarter   Int
+  year      Int
+  isWeekend Boolean
+  sale      sale[]
+}
+
+model category {
+  id        String    @id
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  product   product[]
+}
+
+model changehistory {
+  id             Int      @id @default(autoincrement())
+  fileId         Int
+  rowId          Int
+  transformation String
+  appliedBy      Int
+  appliedAt      DateTime @default(now())
+  user           user     @relation(fields: [appliedBy], references: [id])
+  file           file     @relation(fields: [fileId], references: [id])
+  rawdata        rawdata  @relation(fields: [rowId], references: [id])
+
+  @@index([appliedBy], name: "ChangeHistory_appliedBy_idx")
+  @@index([fileId], name: "ChangeHistory_fileId_idx")
+  @@index([rowId], name: "ChangeHistory_rowId_idx")
+}
+
+model customer {
+  id            String           @id
+  name          String
+  segment       customer_segment
+  regionId      String
+  joinDate      DateTime
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime
+  region        region           @relation(fields: [regionId], references: [id])
+  sale          sale[]
+  validateddata validateddata[]
+
+  @@index([regionId], name: "Customer_regionId_idx")
+}
+
+model employee {
+  id             String              @id
+  name           String
+  department     employee_department
+  managerId      String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime
+  manager        employee?           @relation("EmployeeToManager", fields: [managerId], references: [id])
+  subordinates   employee[]          @relation("EmployeeToManager")
+  sale           sale[]
+
+  @@index([managerId], name: "Employee_managerId_idx")
+}
+
+model file {
+  id            Int             @id @default(autoincrement())
+  filename      String
+  fileType      String
+  uploadedBy    Int
+  uploadedAt    DateTime        @default(now())
+  status        file_status
+  changehistory changehistory[]
+  user          user            @relation(fields: [uploadedBy], references: [id])
+  rawdata       rawdata[]
+  validateddata validateddata[]
+
+  @@index([uploadedBy], name: "File_uploadedBy_idx")
+}
+
+model product {
+  id            String          @id
+  name          String
+  categoryId    String
+  basePrice     Float
+  cost          Float
+  margin        Float
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  category      category        @relation(fields: [categoryId], references: [id])
+  sale          sale[]
+  validateddata validateddata[]
+
+  @@index([categoryId], name: "Product_categoryId_idx")
+}
+
+model rawdata {
+  id               Int                      @id @default(autoincrement())
+  fileId           Int
+  rowNumber        Int
+  dataJson         Json
+  validationStatus rawdata_validationStatus
+  errorMessage     String?
+  changehistory    changehistory[]
+  file             file                     @relation(fields: [fileId], references: [id])
+
+  @@index([fileId], name: "RawData_fileId_idx")
+}
+
+model region {
+  city          String
+  coordinates   String?
+  country       String
+  createdAt     DateTime        @default(now())
+  id            String          @id
+  updatedAt     DateTime
+  customer      customer[]
+  sale          sale[]
+  validateddata validateddata[]
+}
+
+model role {
+  id          Int       @id @default(autoincrement())
+  name        role_name @unique
+  description String?
+  user        user[]
+}
+
+model sale {
+  id            String             @id
+  saleDate      DateTime
+  productId     String
+  customerId    String
+  employeeId    String
+  quantity      Int
+  unitPrice     Float
+  totalAmount   Float
+  discount      Float?
+  paymentMethod sale_paymentMethod
+  regionId      String
+  userId        Int
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime
+  customer      customer           @relation(fields: [customerId], references: [id])
+  employee      employee           @relation(fields: [employeeId], references: [id])
+  product       product            @relation(fields: [productId], references: [id])
+  region        region             @relation(fields: [regionId], references: [id])
+  calendar      calendar           @relation(fields: [saleDate], references: [date])
+  user          user               @relation(fields: [userId], references: [id])
+  validateddata validateddata[]
+
+  @@index([customerId], name: "Sale_customerId_idx")
+  @@index([employeeId], name: "Sale_employeeId_idx")
+  @@index([productId], name: "Sale_productId_idx")
+  @@index([regionId], name: "Sale_regionId_idx")
+  @@index([saleDate], name: "Sale_saleDate_idx")
+  @@index([userId], name: "Sale_userId_idx")
+}
+
+model session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      user     @relation(fields: [userId], references: [id])
+
+  @@index([userId], name: "Session_userId_idx")
+}
+
+model user {
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String          @unique
+  password      String          @db.VarChar(255)
+  roleId        Int
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  changehistory changehistory[]
+  file          file[]
+  sale          sale[]
+  session       session[]
+  role          role            @relation(fields: [roleId], references: [id])
+
+  @@index([roleId], name: "User_roleId_idx")
+}
+
+model validateddata {
+  id           Int       @id @default(autoincrement())
+  fileId       Int
+  saleId       String?
+  saleDate     DateTime
+  productId    String?
+  productName  String
+  quantity     Int
+  price        Float
+  customerId   String?
+  customerName String?
+  regionId     String?
+  regionName   String?
+  customer     customer? @relation(fields: [customerId], references: [id])
+  file         file      @relation(fields: [fileId], references: [id])
+  product      product?  @relation(fields: [productId], references: [id])
+  region       region?   @relation(fields: [regionId], references: [id])
+  sale         sale?     @relation(fields: [saleId], references: [id])
+
+  @@index([customerId], name: "ValidatedData_customerId_idx")
+  @@index([fileId], name: "ValidatedData_fileId_idx")
+  @@index([productId], name: "ValidatedData_productId_idx")
+  @@index([regionId], name: "ValidatedData_regionId_idx")
+  @@index([saleId], name: "ValidatedData_saleId_idx")
+}
+
+enum role_name {
+  ADMIN
+  MANAGER
+  ANALYST
+  USER
+}
+
+enum customer_segment {
+  B2B
+  B2C
+  PREMIUM
+}
+
+enum employee_department {
+  VENTAS
+  LOGISTICA
+  ATENCION_CLIENTE
+}
+
+enum rawdata_validationStatus {
+  PENDING
+  VALID
+  INVALID
+  CORRECTED
+}
+
+enum file_status {
+  UPLOADED
+  PROCESSING
+  VALIDATED
+  ERROR
+}
+
+enum sale_paymentMethod {
+  EFECTIVO
+  TARJETA
+  TRANSFERENCIA
+}
