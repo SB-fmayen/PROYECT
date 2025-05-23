@@ -41,31 +41,32 @@ model changehistory {
   @@index([rowId], name: "ChangeHistory_rowId_idx")
 }
 
-model customer {
-  id            String           @id
-  name          String
-  segment       customer_segment
-  regionId      String
-  joinDate      DateTime
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime
-  region        region           @relation(fields: [regionId], references: [id])
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  segment   customer_segment
+  regionId  String
+  joinDate  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  phone     String
+  email     String
+
+  region        region          @relation(fields: [regionId], references: [id])
   sale          sale[]
   validateddata validateddata[]
-
-  @@index([regionId], name: "Customer_regionId_idx")
 }
 
 model employee {
-  id             String              @id
-  name           String
-  department     employee_department
-  managerId      String?
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime
-  manager        employee?           @relation("EmployeeToManager", fields: [managerId], references: [id])
-  subordinates   employee[]          @relation("EmployeeToManager")
-  sale           sale[]
+  id           String              @id
+  name         String
+  department   employee_department
+  managerId    String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime
+  manager      employee?           @relation("EmployeeToManager", fields: [managerId], references: [id])
+  subordinates employee[]          @relation("EmployeeToManager")
+  sale         sale[]
 
   @@index([managerId], name: "Employee_managerId_idx")
 }
@@ -121,16 +122,15 @@ model region {
   createdAt     DateTime        @default(now())
   id            String          @id
   updatedAt     DateTime
-  customer      customer[]
+  customer      Customer[]
   sale          sale[]
   validateddata validateddata[]
 }
 
-model role {
-  id          Int       @id @default(autoincrement())
-  name        role_name @unique
-  description String?
-  user        user[]
+model Role {
+  id    Int     @id @default(autoincrement())
+  name  role_name  @unique
+  users user[]
 }
 
 model sale {
@@ -148,7 +148,7 @@ model sale {
   userId        Int
   createdAt     DateTime           @default(now())
   updatedAt     DateTime
-  customer      customer           @relation(fields: [customerId], references: [id])
+  customer      Customer           @relation(fields: [customerId], references: [id])
   employee      employee           @relation(fields: [employeeId], references: [id])
   product       product            @relation(fields: [productId], references: [id])
   region        region             @relation(fields: [regionId], references: [id])
@@ -183,12 +183,13 @@ model user {
   roleId        Int
   isActive      Boolean         @default(true)
   createdAt     DateTime        @default(now())
-  updatedAt     DateTime
+  updatedAt DateTime            @updatedAt
+
+  role          Role            @relation(fields: [roleId], references: [id])
   changehistory changehistory[]
   file          file[]
   sale          sale[]
   session       session[]
-  role          role            @relation(fields: [roleId], references: [id])
 
   @@index([roleId], name: "User_roleId_idx")
 }
@@ -206,7 +207,7 @@ model validateddata {
   customerName String?
   regionId     String?
   regionName   String?
-  customer     customer? @relation(fields: [customerId], references: [id])
+  customer     Customer? @relation(fields: [customerId], references: [id])
   file         file      @relation(fields: [fileId], references: [id])
   product      product?  @relation(fields: [productId], references: [id])
   region       region?   @relation(fields: [regionId], references: [id])

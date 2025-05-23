@@ -1,4 +1,4 @@
-.login-wrapper {
+.register-wrapper {
   background-color: #f2f2f2;
   min-height: 100vh;
   display: flex;
@@ -82,6 +82,11 @@ input:focus {
   margin-top: 1rem;
   border-radius: 6px;
   font-size: 0.9rem;
+}
+
+.alert.success {
+  background-color: #dff0d8;
+  color: #3c763d;
 }
 
 .alert.error {

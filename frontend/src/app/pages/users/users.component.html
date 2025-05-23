@@ -1,21 +1,46 @@
-<div class="container mt-4" *ngIf="mostrarTabla">
-  <h2 class="text-center mb-4 text-white">Usuarios registrados</h2>
-  <table class="table table-dark table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Email</th>
-        <th>Rol</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.id }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role?.name }}</td>
-      </tr>
-    </tbody>
-  </table>
+<div class="usuarios-wrapper animate__animated animate__fadeInUp">
+  <h2 class="titulo">👤 Usuarios Registrados</h2>
+
+  <div class="filtros-grid">
+    <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="filtro.name">
+    <input type="text" class="form-control" placeholder="Correo" [(ngModel)]="filtro.email">
+    <input type="text" class="form-control" placeholder="Rol ID" [(ngModel)]="filtro.roleId">
+    <input type="text" class="form-control" placeholder="Activo (1 o 0)" [(ngModel)]="filtro.isActive">
+    <input type="date" class="form-control" [(ngModel)]="filtro.createdFrom">
+    <input type="date" class="form-control" [(ngModel)]="filtro.createdTo">
+  </div>
+
+  <div class="botones">
+    <button class="btn btn-success" (click)="filtrar()">🔍 Filtrar</button>
+    <button class="btn btn-outline-secondary" (click)="limpiarFiltros()">🧹 Limpiar</button>
+    <button class="btn btn-outline-danger" (click)="exportarPDF()">📄 Exportar PDF</button>
+    <button class="btn btn-outline-success" (click)="exportarExcel()">📊 Exportar Excel</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped align-middle text-center shadow-sm animate-hover">
+      <thead class="table-success">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Activo</th>
+          <th>Creado</th>
+          <th>Actualizado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of usuarios">
+          <td>{{ u.id }}</td>
+          <td>{{ u.name }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.roleId }}</td>
+          <td>{{ u.isActive }}</td>
+          <td>{{ u.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td>{{ u.updatedAt | date:'dd/MM/yyyy' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

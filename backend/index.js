@@ -11,39 +11,56 @@ const employeeRoutes = require('./routes/employeeRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const regionRoutes = require('./routes/regionRoutes');
 const authRoutes = require('./routes/authRoutes');
-const verifyToken = require('./middleware/verifyToken');
-const checkRole = require('./middleware/checkRole');
 const reportRoutes = require('./routes/reportRoutes');
-
-
-
-
 
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Servidor funcionando 🚀');
+  res.status(200).json({
+    status: 'OK',
+    message: 'Servidor funcionando 🚀',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// RUTA REGISTRADA CORRECTAMENTE
-// RUTAS
-app.use('/users', userRoutes); // sin autenticación
-app.use('/sales', saleRoutes); // ✔ sin verifyToken
-app.use('/products', productRoutes);
-app.use('/customers', customerRoutes);
-app.use('/employees', employeeRoutes);
-app.use('/categories', categoryRoutes);
-app.use('/regions', regionRoutes);
-app.use('/', authRoutes);
-app.use('/api/reports', reportRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/sales', saleRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/customers', customerRoutes);
+app.use('/api/v1/employees', employeeRoutes);
+app.use('/api/v1/categories', categoryRoutes);
+app.use('/api/v1/regions', regionRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/reports', reportRoutes);
 
+app.use((err, req, res, next) => {
+  console.error('Error global:', err.stack);
+  res.status(500).json({ error: 'Algo salió mal en el servidor' });
+});
 
-
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  try {
+    await prisma.$connect();
+    console.log('✅ Prisma conectado a la base de datos');
+  } catch (error) {
+    console.error('❌ Error conectando Prisma:', error);
+  }
+});
+
+process.on('SIGTERM', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
 });

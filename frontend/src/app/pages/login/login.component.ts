@@ -1,34 +1,50 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  imports: [FormsModule, CommonModule]
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   email = '';
   password = '';
   errorMessage = '';
+  showPassword = false;
 
   constructor(private auth: AuthService, private router: Router) {}
 
-  login() {
+  login(): void {
+    if (!this.email.trim() || !this.password.trim()) {
+      this.errorMessage = 'Todos los campos son obligatorios';
+      return;
+    }
+
     this.auth.login({ email: this.email, password: this.password }).subscribe({
       next: (res) => {
-        this.auth.saveToken(res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        // ✅ Redirección corregida
-        this.router.navigate(['/dashboard/users']);
+        console.log('✅ Login exitoso:', res);
+
+        if (res.token) {
+          this.auth.saveToken(res.token);
+          localStorage.setItem('user', JSON.stringify(res.user));
+          this.router.navigate(['/dashboard/users']);
+        } else {
+          this.errorMessage = 'Token no recibido del servidor.';
+        }
       },
-      error: () => {
-        this.errorMessage = 'Credenciales inválidas';
+      error: (err) => {
+        console.error('❌ Login fallido:', err);
+        this.errorMessage = err.error?.error || 'Credenciales inválidas';
       }
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

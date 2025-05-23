@@ -1,1 +1,74 @@
-<p>products works!</p>
+<div class="container mt-4">
+  <h2 class="text-center mb-4 text-light">Productos registrados</h2>
+
+  <!-- Filtros -->
+  <div class="row g-2 mb-3 text-white">
+    <div class="col-md-3">
+      <label>Nombre</label>
+      <input class="form-control" [(ngModel)]="filtro.name" placeholder="Buscar por nombre" />
+    </div>
+
+    <div class="col-md-2">
+      <label>Categoría</label>
+      <input class="form-control" [(ngModel)]="filtro.categoryId" placeholder="cat1, cat2..." />
+    </div>
+
+    <div class="col-md-2">
+      <label>Precio mínimo</label>
+      <input type="number" class="form-control" [(ngModel)]="filtro.minPrice" />
+    </div>
+
+    <div class="col-md-2">
+      <label>Precio máximo</label>
+      <input type="number" class="form-control" [(ngModel)]="filtro.maxPrice" />
+    </div>
+
+    <div class="col-md-3 d-flex gap-2 align-items-end">
+      <button class="btn btn-primary w-50" (click)="filtrar()">Filtrar</button>
+      <button class="btn btn-secondary w-50" (click)="limpiarFiltros()">Limpiar</button>
+    </div>
+
+    <div class="col-md-3">
+      <label>Desde</label>
+      <input type="date" class="form-control" [(ngModel)]="filtro.fechaInicio" />
+    </div>
+
+    <div class="col-md-3">
+      <label>Hasta</label>
+      <input type="date" class="form-control" [(ngModel)]="filtro.fechaFin" />
+    </div>
+
+    <div class="col-md-6 d-flex justify-content-end align-items-end gap-2">
+      <button class="btn btn-danger" (click)="exportToPDF()">Exportar a PDF</button>
+      <button class="btn btn-success" (click)="exportToExcel()">Exportar a Excel</button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-responsive">
+    <table class="table table-dark table-hover text-center rounded">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Precio Base</th>
+          <th>Costo</th>
+          <th>Margen</th>
+          <th>Fecha de Creación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products">
+          <td>{{ p.id }}</td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.categoryId }}</td>
+          <td>{{ p.basePrice }}</td>
+          <td>{{ p.cost }}</td>
+          <td>{{ p.margin }}</td>
+          <td>{{ p.createdAt | date: 'dd/MM/yyyy' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

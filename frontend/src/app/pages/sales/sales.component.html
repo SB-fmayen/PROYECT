@@ -1,20 +1,81 @@
-<div class="container mt-4" *ngIf="mostrarTabla">
-  <h2 class="text-center mb-4 text-white">Ventas registradas</h2>
-  <table class="table table-dark table-striped">
+<div class="sales-container">
+  <h2 class="title">Ventas registradas</h2>
+
+  <div class="filter-grid">
+    <div class="filter-item">
+      <label>ID Cliente</label>
+      <input type="text" class="form-control" [(ngModel)]="filtro.customerId">
+    </div>
+    <div class="filter-item">
+      <label>ID Producto</label>
+      <input type="text" class="form-control" [(ngModel)]="filtro.productId">
+    </div>
+    <div class="filter-item">
+      <label>ID Empleado</label>
+      <input type="text" class="form-control" [(ngModel)]="filtro.employeeId">
+    </div>
+    <div class="filter-item">
+      <label>Desde</label>
+      <input type="date" class="form-control" [(ngModel)]="filtro.fechaInicio">
+    </div>
+    <div class="filter-item">
+      <label>Hasta</label>
+      <input type="date" class="form-control" [(ngModel)]="filtro.fechaFin">
+    </div>
+    <div class="filter-item">
+      <label>Método de Pago</label>
+      <input type="text" class="form-control" [(ngModel)]="filtro.paymentMethod">
+    </div>
+    <div class="filter-item">
+      <label>ID Región</label>
+      <input type="text" class="form-control" [(ngModel)]="filtro.regionId">
+    </div>
+    <div class="filter-item">
+      <label>Total Mínimo</label>
+      <input type="number" class="form-control" [(ngModel)]="filtro.minTotal">
+    </div>
+    <div class="filter-item">
+      <label>Total Máximo</label>
+      <input type="number" class="form-control" [(ngModel)]="filtro.maxTotal">
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button class="btn btn-primary" (click)="filtrar()">Filtrar</button>
+    <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+    <button class="btn btn-danger" (click)="exportToPDF()">Exportar a PDF</button>
+    <button class="btn btn-success" (click)="exportToExcel()">Exportar a Excel</button>
+  </div>
+
+  <table class="table table-dark table-striped table-animate">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Cliente</th>
-        <th>Monto</th>
         <th>Fecha</th>
+        <th>Producto</th>
+        <th>Cliente</th>
+        <th>Empleado</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario</th>
+        <th>Total</th>
+        <th>Descuento</th>
+        <th>Método Pago</th>
+        <th>Región</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let sale of sales">
         <td>{{ sale.id }}</td>
+        <td>{{ sale.saleDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ sale.productId }}</td>
         <td>{{ sale.customerId }}</td>
+        <td>{{ sale.employeeId }}</td>
+        <td>{{ sale.quantity }}</td>
+        <td>{{ sale.unitPrice }}</td>
         <td>{{ sale.totalAmount }}</td>
-        <td>{{ sale.saleDate | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ sale.discount }}</td>
+        <td>{{ sale.paymentMethod }}</td>
+        <td>{{ sale.regionId }}</td>
       </tr>
     </tbody>
   </table>

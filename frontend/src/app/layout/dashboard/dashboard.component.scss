@@ -1,24 +1,45 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background: url('/assets/pattern-light.png'), linear-gradient(to bottom, #f9fafb, #ffffff);
+  background-repeat: repeat;
+  font-family: 'Inter', sans-serif;
+}
+
 .sidebar {
   width: 250px;
-  min-height: 100vh;
-  background: #1c1f26;
-  color: white;
+  background-color: #ffffff;
+  padding: 2rem 1rem;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+
+  h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
 
   .nav-link {
-    color: #bbb;
+    color: #3cb371;
+    font-weight: 500;
     padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
 
     &:hover,
     &.active {
-      background-color: #28a745;
+      background-color: #3cb371;
       color: white;
     }
   }
 }
 
 .content {
-  background: linear-gradient(135deg, #0f0f0f, #004d00);
-  color: white;
-  min-height: 100vh;
+  flex: 1;
+  padding: 2rem;
+  background-color: #ffffff;
+  margin: 2rem;
+  border-radius: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }

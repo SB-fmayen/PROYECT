@@ -1,0 +1,63 @@
+.usuarios-wrapper {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 20px;
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  margin: 2rem;
+
+  .titulo {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #3cb371; // verde limón
+    font-weight: bold;
+  }
+
+  .filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    input {
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  .botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    .btn {
+      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .table {
+    border-radius: 12px;
+    overflow: hidden;
+
+    thead {
+      font-weight: bold;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f1f1;
+      transition: background-color 0.3s ease;
+    }
+  }
+}

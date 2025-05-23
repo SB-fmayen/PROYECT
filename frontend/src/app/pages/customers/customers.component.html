@@ -1,1 +1,84 @@
-<p>customers works!</p>
+<div class="container mt-4">
+  <h2 class="text-center mb-4 text-light">Clientes registrados</h2>
+
+  <!-- Filtros -->
+  <div class="row g-2 mb-3 text-white">
+    <div class="col-md-3">
+      <label>Nombre</label>
+      <input class="form-control" [(ngModel)]="filtro.nombre" placeholder="Filtrar por nombre" />
+    </div>
+
+    <div class="col-md-3">
+      <label>Email</label>
+      <input class="form-control" [(ngModel)]="filtro.email" placeholder="Filtrar por email" />
+    </div>
+
+    <div class="col-md-3">
+      <label>Teléfono</label>
+      <input class="form-control" [(ngModel)]="filtro.phone" placeholder="Filtrar por teléfono" />
+    </div>
+
+    <div class="col-md-3">
+      <label>Segmento</label>
+      <select class="form-control" [(ngModel)]="filtro.segment">
+        <option value="">Todos</option>
+        <option value="B2B">B2B</option>
+        <option value="B2C">B2C</option>
+        <option value="PREMIUM">PREMIUM</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label>Región</label>
+      <input class="form-control" [(ngModel)]="filtro.regionId" placeholder="reg1, reg2..." />
+    </div>
+
+    <div class="col-md-3">
+      <label>Desde</label>
+      <input type="date" class="form-control" [(ngModel)]="filtro.fechaInicio" />
+    </div>
+
+    <div class="col-md-3">
+      <label>Hasta</label>
+      <input type="date" class="form-control" [(ngModel)]="filtro.fechaFin" />
+    </div>
+
+    <div class="col-md-3 d-flex gap-2 align-items-end">
+      <button class="btn btn-primary w-50" (click)="filtrar()">Filtrar</button>
+      <button class="btn btn-secondary w-50" (click)="limpiarFiltros()">Limpiar</button>
+    </div>
+
+    <div class="col-12 d-flex justify-content-end mt-3 gap-2">
+      <button class="btn btn-danger" (click)="exportToPDF()">Exportar a PDF</button>
+      <button class="btn btn-success" (click)="exportToExcel()">Exportar a Excel</button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-responsive">
+    <table class="table table-dark table-hover text-center rounded">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Segmento</th>
+          <th>Región</th>
+          <th>Fecha de Ingreso</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of customers">
+          <td>{{ customer.id }}</td>
+          <td>{{ customer.name }}</td>
+          <td>{{ customer.segment }}</td>
+          <td>{{ customer.regionId }}</td>
+          <td>{{ customer.joinDate | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ customer.phone }}</td>
+          <td>{{ customer.email }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,1 +1,41 @@
-<p>employees works!</p>
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Empleados registrados</h2>
+
+  <div class="filtros-grid mb-3">
+    <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="filtro.name">
+    <input type="text" class="form-control" placeholder="Departamento" [(ngModel)]="filtro.department">
+    <input type="text" class="form-control" placeholder="Manager ID" [(ngModel)]="filtro.managerId">
+    <input type="date" class="form-control" [(ngModel)]="filtro.createdFrom">
+    <input type="date" class="form-control" [(ngModel)]="filtro.createdTo">
+  </div>
+
+  <div class="mb-3">
+    <button class="btn btn-primary me-2" (click)="filtrar()">Filtrar</button>
+    <button class="btn btn-secondary me-2" (click)="limpiarFiltros()">Limpiar</button>
+    <button class="btn btn-danger me-2" (click)="exportToPDF()">Exportar a PDF</button>
+    <button class="btn btn-success" (click)="exportToExcel()">Exportar a Excel</button>
+  </div>
+
+  <table class="table table-dark table-hover text-center">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Departamento</th>
+        <th>Manager ID</th>
+        <th>Creado</th>
+        <th>Actualizado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let employee of employees">
+        <td>{{ employee.id }}</td>
+        <td>{{ employee.name }}</td>
+        <td>{{ employee.department }}</td>
+        <td>{{ employee.managerId || 'Sin asignar' }}</td>
+        <td>{{ employee.createdAt | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ employee.updatedAt | date: 'dd/MM/yyyy' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

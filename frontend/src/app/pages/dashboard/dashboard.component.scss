@@ -1,8 +1,53 @@
 .dashboard-wrapper {
-  background: linear-gradient(135deg, #0f0f0f, #004d00); // 🎨 Degradado verde/negro
-  font-family: "Segoe UI", sans-serif;
-  padding: 2rem;
   min-height: 100vh;
-  color: white; // 🌟 Texto blanco visible
-  text-align: center;
+  background-color: #f4f6f8; // gris claro
+  display: flex;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #1e1e1e;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+
+  h4 {
+    color: #3cb371; // verde limón
+    font-weight: bold;
+  }
+
+  .nav-link {
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #3cb371;
+      color: #fff;
+    }
+  }
+
+  .btn-danger {
+    border-radius: 10px;
+  }
+}
+
+.content {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  margin: 2rem;
+  padding: 2rem;
+  width: 100%;
+  overflow-x: auto;
+}
+
+// Estilo reutilizable para tarjetas, tablas, formularios
+.card, .table, .form-control {
+  background-color: #ffffff;
+  color: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }

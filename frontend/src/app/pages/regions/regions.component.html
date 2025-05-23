@@ -1,1 +1,40 @@
-<p>regions works!</p>
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Regiones registradas</h2>
+
+  <div class="filtros-grid mb-3">
+    <input type="text" class="form-control" placeholder="Ciudad" [(ngModel)]="filtro.city">
+    <input type="text" class="form-control" placeholder="País" [(ngModel)]="filtro.country">
+    <input type="date" class="form-control" [(ngModel)]="filtro.createdFrom">
+    <input type="date" class="form-control" [(ngModel)]="filtro.createdTo">
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+    <button class="btn btn-primary" (click)="filtrar()">Filtrar</button>
+    <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+    <button class="btn btn-danger" (click)="exportToPDF()">Exportar a PDF</button>
+    <button class="btn btn-success" (click)="exportToExcel()">Exportar a Excel</button>
+  </div>
+
+  <table class="table table-dark table-hover text-center">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ciudad</th>
+        <th>País</th>
+        <th>Coordenadas</th>
+        <th>Creado</th>
+        <th>Actualizado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let region of regions">
+        <td>{{ region.id }}</td>
+        <td>{{ region.city }}</td>
+        <td>{{ region.country }}</td>
+        <td>{{ region.coordinates || 'N/A' }}</td>
+        <td>{{ region.createdAt | date: 'short' }}</td>
+        <td>{{ region.updatedAt | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,8 +1,19 @@
-<!-- login.component.html CORRECTO -->
-<div class="login-wrapper">
+<!-- register.component.html -->
+<div class="register-wrapper">
   <div class="form-card animate">
-    <h2>Iniciar Sesión</h2>
-    <form (ngSubmit)="login()" autocomplete="off">
+    <h2>Crear Cuenta</h2>
+    <form (ngSubmit)="register()" autocomplete="off">
+      <!-- Nombre -->
+      <label for="name">Nombre</label>
+      <input
+        type="text"
+        [(ngModel)]="name"
+        name="name"
+        id="name"
+        required
+        autocomplete="name"
+      />
+
       <!-- Correo -->
       <label for="email">Correo electrónico</label>
       <input
@@ -23,19 +34,22 @@
           name="password"
           id="password"
           required
+          minlength="6"
         />
         <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn" title="Mostrar/Ocultar">
           <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
         </button>
       </div>
 
-      <button class="btn-submit" type="submit">
-        Iniciar Sesión
+      <button class="btn-submit" type="submit" [disabled]="loading">
+        {{ loading ? 'Registrando...' : 'Registrarse' }}
       </button>
 
+      <!-- Mensajes -->
+      <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
       <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
     </form>
 
-    <p class="extra-text">¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
+    <p class="extra-text">¿Ya tienes cuenta? <a routerLink="/">Iniciar sesión</a></p>
   </div>
 </div>

@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const reportController = require('../controllers/reportController');
+const regionController = require('../controllers/regionController');
 
-// Rutas públicas sin token
-router.get('/pdf', reportController.getSalesReportPDF);
-router.get('/excel', reportController.getSalesReportExcel);
+router.get('/', regionController.getRegions);
 
 module.exports = router;
