@@ -51,6 +51,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/regions/regions.component').then(m => m.RegionsComponent),
       },
+    
     ],
   },
 ];

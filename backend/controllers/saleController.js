@@ -1,34 +1,35 @@
+// ✅ saleController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.getSales = async (req, res) => {
   try {
     const {
-      customerId,
-      productId,
-      employeeId,
+      clienteId,
+      productoId,
+      empleadoId,
       fechaInicio,
       fechaFin,
-      paymentMethod,
+      metodoPago,
       regionId,
       minTotal,
       maxTotal,
     } = req.query;
 
     const filters = {
-      customerId: customerId ? String(customerId).trim() : undefined,
-      productId: productId ? String(productId).trim() : undefined,
-      employeeId: employeeId ? String(employeeId).trim() : undefined, // ✅ nuevo filtro
-      paymentMethod: paymentMethod ? String(paymentMethod).trim() : undefined,
-      regionId: regionId ? String(regionId).trim() : undefined,
-      saleDate:
+      clienteId: clienteId || undefined,
+      productoId: productoId || undefined,
+      empleadoId: empleadoId || undefined,
+      metodoPago: metodoPago || undefined,
+      regionId: regionId || undefined,
+      fechaVenta:
         fechaInicio && fechaFin
           ? {
-              gte: new Date(fechaInicio),
-              lte: new Date(fechaFin),
+              gte: new Date(fechaInicio + 'T00:00:00Z'),
+              lte: new Date(fechaFin + 'T23:59:59Z'),
             }
           : undefined,
-      totalAmount:
+      total:
         minTotal && maxTotal
           ? {
               gte: parseFloat(minTotal),
@@ -37,22 +38,22 @@ exports.getSales = async (req, res) => {
           : undefined,
     };
 
-    const sales = await prisma.sale.findMany({
-      where: filters,
-      orderBy: {
-        saleDate: 'desc',
-      },
+    const cleanFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v !== undefined));
+
+    const sales = await prisma.venta.findMany({
+      where: cleanFilters,
+      orderBy: { fechaVenta: 'desc' },
       select: {
         id: true,
-        saleDate: true,
-        productId: true,
-        customerId: true,
-        employeeId: true,
-        quantity: true,
-        unitPrice: true,
-        totalAmount: true,
-        discount: true,
-        paymentMethod: true,
+        fechaVenta: true,
+        productoId: true,
+        clienteId: true,
+        empleadoId: true,
+        cantidad: true,
+        precioUnitario: true,
+        total: true,
+        descuento: true,
+        metodoPago: true,
         regionId: true,
       },
     });

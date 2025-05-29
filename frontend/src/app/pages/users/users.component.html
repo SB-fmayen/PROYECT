@@ -1,46 +1,165 @@
-<div class="usuarios-wrapper animate__animated animate__fadeInUp">
-  <h2 class="titulo">👤 Usuarios Registrados</h2>
+<div class="users-container p-4 bg-white rounded-lg shadow-sm">
+  <!-- Barra superior -->
+  <div class="d-flex align-items-center mb-3 gap-2">
+    <input
+      type="text"
+      class="form-control flex-grow-1"
+      placeholder="Buscar usuarios por nombre o correo..."
+      [(ngModel)]="filtro.name"
+      (input)="filtrar()"
+    />
 
-  <div class="filtros-grid">
-    <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="filtro.name">
-    <input type="text" class="form-control" placeholder="Correo" [(ngModel)]="filtro.email">
-    <input type="text" class="form-control" placeholder="Rol ID" [(ngModel)]="filtro.roleId">
-    <input type="text" class="form-control" placeholder="Activo (1 o 0)" [(ngModel)]="filtro.isActive">
-    <input type="date" class="form-control" [(ngModel)]="filtro.createdFrom">
-    <input type="date" class="form-control" [(ngModel)]="filtro.createdTo">
+    <!-- Filtros desplegable -->
+    <div class="position-relative">
+      <button class="btn btn-primary d-flex align-items-center px-3" (click)="toggleFilter()">
+        <i class="bi bi-filter me-2"></i>Filtros
+      </button>
+      <div
+        *ngIf="showFilter"
+        class="filter-popover p-3 bg-white border rounded shadow"
+      >
+        <div class="mb-3">
+          <label class="form-label">Rol</label>
+          <select class="form-select" [(ngModel)]="filtro.roleId" name="roleId">
+            <option value="">Todos</option>
+            <option *ngFor="let r of roles" [value]="r.id">{{ r.nombre }}</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Estado</label>
+          <select class="form-select" [(ngModel)]="filtro.isActive" name="isActive">
+            <option value="">Cualquiera</option>
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+          </select>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col">
+            <label class="form-label">Desde</label>
+            <input type="date" class="form-control" [(ngModel)]="filtro.createdFrom" name="createdFrom" />
+          </div>
+          <div class="col">
+            <label class="form-label">Hasta</label>
+            <input type="date" class="form-control" [(ngModel)]="filtro.createdTo" name="createdTo" />
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+          <button class="btn btn-outline-secondary" (click)="limpiarFiltros()">Limpiar</button>
+          <button class="btn btn-primary" (click)="aplicarFiltros()">Aplicar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <button class="btn btn-outline-danger px-3" (click)="exportarPDF()">
+      <i class="bi bi-file-earmark-pdf me-2"></i>PDF
+    </button>
+    <button class="btn btn-outline-warning px-3" (click)="exportarExcel()">
+      <i class="bi bi-file-earmark-excel me-2"></i>Excel
+    </button>
   </div>
 
-  <div class="botones">
-    <button class="btn btn-success" (click)="filtrar()">🔍 Filtrar</button>
-    <button class="btn btn-outline-secondary" (click)="limpiarFiltros()">🧹 Limpiar</button>
-    <button class="btn btn-outline-danger" (click)="exportarPDF()">📄 Exportar PDF</button>
-    <button class="btn btn-outline-success" (click)="exportarExcel()">📊 Exportar Excel</button>
-  </div>
-
+  <!-- Tabla de usuarios -->
   <div class="table-responsive">
-    <table class="table table-striped align-middle text-center shadow-sm animate-hover">
-      <thead class="table-success">
+    <table class="table align-middle mb-0">
+      <thead class="thead-light">
         <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Activo</th>
-          <th>Creado</th>
-          <th>Actualizado</th>
+          <th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th>
+          <th>Activo</th><th>Creado</th><th>Actualizado</th><th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let u of usuarios">
+        <tr *ngFor="let u of usuarios; let i = index" [class.striped]="i % 2 === 1">
           <td>{{ u.id }}</td>
-          <td>{{ u.name }}</td>
-          <td>{{ u.email }}</td>
-          <td>{{ u.roleId }}</td>
-          <td>{{ u.isActive }}</td>
-          <td>{{ u.createdAt | date:'dd/MM/yyyy' }}</td>
-          <td>{{ u.updatedAt | date:'dd/MM/yyyy' }}</td>
+          <td>{{ u.nombre }}</td>
+          <td>{{ u.correo }}</td>
+          <td>{{ u.rol }}</td>
+          <td>{{ u.activo ? 'Sí' : 'No' }}</td>
+          <td>{{ u.creadoEn | date:'dd/MM/yyyy' }}</td>
+          <td>{{ u.actualizadoEn | date:'dd/MM/yyyy' }}</td>
+          <td class="d-flex gap-2">
+            <button class="btn p-0" title="Editar" (click)="abrirEditModal(u)">
+              <i class="bi bi-pencil-fill text-primary fs-5"></i>
+            </button>
+            <button class="btn p-0" title="Eliminar" (click)="abrirDeleteModal(u)">
+              <i class="bi bi-trash-fill text-danger fs-5"></i>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <!-- Modal Edición -->
+  <ng-template #editModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Editar Usuario</h5>
+      <button type="button" class="btn-close" (click)="modal.close()"></button>
+    </div>
+    <form #editForm="ngForm" (ngSubmit)="guardarEdicion(editForm)">
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input
+            name="nombre"
+            type="text"
+            class="form-control"
+            required
+            [(ngModel)]="editUser.nombre"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Correo</label>
+          <input
+            name="correo"
+            type="email"
+            class="form-control"
+            required
+            [(ngModel)]="editUser.correo"
+          />
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <label class="form-label">Rol</label>
+            <select
+              name="rolId"
+              class="form-select"
+              required
+              [(ngModel)]="editUser.rol"
+            >
+              <option *ngFor="let r of roles" [value]="r.id">{{ r.nombre }}</option>
+            </select>
+          </div>
+          <div class="col d-flex align-items-center">
+            <label class="form-label me-2">Activo</label>
+            <input
+              name="activo"
+              type="checkbox"
+              class="form-check-input"
+              [(ngModel)]="editUser.activo"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.close()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Guardar</button>
+      </div>
+    </form>
+  </ng-template>
+
+  <!-- Modal Eliminación -->
+  <ng-template #deleteModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Eliminar Usuario</h5>
+      <button type="button" class="btn-close" (click)="modal.close()"></button>
+    </div>
+    <div class="modal-body">
+      <p>¿Eliminar a <strong>{{ deleteUser.nombre }}</strong>?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-secondary" (click)="modal.close()">Cancelar</button>
+      <button class="btn btn-danger" (click)="confirmarBorrado()">Eliminar</button>
+    </div>
+  </ng-template>
 </div>

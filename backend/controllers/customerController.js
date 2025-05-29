@@ -1,55 +1,63 @@
+// controllers/customerController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.getCustomers = async (req, res) => {
   try {
+    // extraemos los params
     const {
       nombre = '',
-      email = '',
-      phone = '',
-      segment = '',
+      correo = '',
+      telefono = '',
       regionId = '',
       fechaInicio = '',
       fechaFin = ''
     } = req.query;
 
-    // ✅ Este es el bloque filters
+    // armamos filtros con los campos reales
     const filters = {
-      name: nombre ? { contains: String(nombre).trim() } : undefined,
-      email: email ? { contains: String(email).trim() } : undefined,
-      phone: phone ? { contains: String(phone).trim() } : undefined,
-      segment: segment ? { equals: String(segment).trim() } : undefined,
-      regionId: regionId ? { equals: String(regionId).trim() } : undefined,
-      joinDate:
-        fechaInicio && fechaFin
-          ? {
-              gte: new Date(fechaInicio),
-              lte: new Date(fechaFin),
-            }
-          : undefined,
+      nombre: nombre ? { contains: nombre.trim() } : undefined,
+      correo: correo ? { contains: correo.trim() } : undefined,
+      telefono: telefono ? { contains: telefono.trim() } : undefined,
+      regionId: regionId ? { equals: regionId.trim() } : undefined,
+      creadoEn: (fechaInicio && fechaFin)
+        ? {
+          gte: new Date(fechaInicio),
+          lte: new Date(fechaFin),
+        }
+        : undefined,
     };
 
-    // 🔎 Consulta con filtros aplicados
-    const customers = await prisma.customer.findMany({
+    // consulta sobre prisma.cliente
+    const clientes = await prisma.cliente.findMany({
       where: filters,
-      orderBy: { name: 'asc' },
+      orderBy: { nombre: 'asc' },
       select: {
         id: true,
-        name: true,
-        segment: true,
+        nombre: true,
+        correo: true,
+        telefono: true,
         regionId: true,
-        joinDate: true,
-        phone: true,
-        email: true,
-      },
+        creadoEn: true
+      }
     });
 
-    res.json(customers);
+    // mapeamos al formato que espera Angular
+    const response = clientes.map(c => ({
+      id: c.id,
+      name: c.nombre,
+      email: c.correo,
+      phone: c.telefono,
+      regionId: c.regionId,
+      joinDate: c.creadoEn
+    }));
+
+    res.json(response);
   } catch (error) {
-    console.error('❌ Error en getCustomers:', error.message);
+    console.error('❌ Error en getCustomers:', error);
     res.status(500).json({
       error: 'Error interno al filtrar clientes',
-      detalle: error.message,
+      detalle: error.message
     });
   }
 };

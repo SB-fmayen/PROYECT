@@ -32,6 +32,8 @@ export class LoginComponent {
         if (res.token) {
           this.auth.saveToken(res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
+
+          // ✅ Redirige a /dashboard/usuarios (corregido)
           this.router.navigate(['/dashboard/users']);
         } else {
           this.errorMessage = 'Token no recibido del servidor.';

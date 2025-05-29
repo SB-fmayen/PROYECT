@@ -1,100 +1,26 @@
 .sales-container {
-  background: rgba(0, 0, 0, 0.15);
-  padding: 2rem;
-  border-radius: 20px;
-  color: white;
-  text-align: center;
+  background-color: #f8f9fa;
 
-  .title {
-    font-size: 2rem;
+  .page-title {
+    font-size: 1.6rem;
     font-weight: bold;
-    margin-bottom: 1.5rem;
-    color: #00ffc8;
-    text-shadow: 0 0 8px #00ffc8;
+    color: #2c3e50;
   }
 
-  .filter-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    text-align: left;
-
-    .filter-item {
-      display: flex;
-      flex-direction: column;
-
-      label {
-        margin-bottom: 0.25rem;
-        font-size: 0.9rem;
-        color: #ffffffcc;
-      }
-
-      input {
-        background-color: #1e1e1e;
-        color: white;
-        border: 1px solid #00ffc8;
-        border-radius: 6px;
-        padding: 0.4rem 0.6rem;
-      }
-    }
+  .filter-popover {
+    z-index: 1000;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 0.5rem;
   }
 
-  .button-group {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-
-    .btn {
-      font-weight: 600;
-      padding: 0.5rem 1rem;
-    }
-
-    .btn-primary {
-      background-color: #007bff;
-    }
-
-    .btn-secondary {
-      background-color: #6c757d;
-    }
-
-    .btn-danger {
-      background-color: #dc3545;
-    }
-
-    .btn-success {
-      background-color: #28a745;
-    }
+  .table {
+    border-radius: 0 0 0.5rem 0.5rem;
+    overflow: hidden;
   }
 
-  .table-animate {
-    animation: fadeIn 0.6s ease-in-out;
+  .progress {
+    height: 20px;
   }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-
-  /* Animación al pasar el mouse sobre una fila de la tabla */
-table tbody tr {
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  cursor: pointer;
-}
-
-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.05); // cambia ligeramente el fondo
-  transform: scale(1.01); // pequeño aumento visual
-  box-shadow: 0 2px 12px rgba(0, 255, 200, 0.3); // sombra suave tipo glow
-}
-
 }
