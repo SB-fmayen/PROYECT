@@ -1,30 +1,48 @@
 <div class="layout-container animate__animated animate__fadeInUp">
   <!-- Menú lateral -->
-  <div class="sidebar">
-    <h4>📊 Dashboard</h4>
-    <ul class="nav flex-column">
-      <li class="nav-item">
-        <a [routerLink]="['/dashboard/users']" routerLinkActive="active" class="nav-link">👤 Usuarios</a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]="['/dashboard/sales']" routerLinkActive="active" class="nav-link">💰 Ventas</a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]="['/dashboard/products']" routerLinkActive="active" class="nav-link">📦 Productos</a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]="['/dashboard/customers']" routerLinkActive="active" class="nav-link">👥 Clientes</a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]="['/dashboard/employees']" routerLinkActive="active" class="nav-link">🧑‍💼 Empleados</a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]="['/dashboard/categories']" routerLinkActive="active" class="nav-link">🏷️ Categorías</a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]="['/dashboard/regions']" routerLinkActive="active" class="nav-link">🗺️ Regiones</a>
-      </li>
-    </ul>
+  <div class="sidebar d-flex flex-column justify-content-between">
+    <div>
+      <h4>📊 Dashboard</h4>
+      <ul class="nav flex-column">
+        <!-- Solo para Administrador -->
+        <li class="nav-item" *ngIf="isAdmin()">
+          <a [routerLink]="['/dashboard/users']" routerLinkActive="active" class="nav-link">👤 Usuarios</a>
+        </li>
+
+        <!-- Solo para Analista y Administrador -->
+        <li class="nav-item" *ngIf="isAnalista() || isAdmin()">
+          <a [routerLink]="['/dashboard/sales']" routerLinkActive="active" class="nav-link">💰 Ventas</a>
+        </li>
+
+        <!-- Para todos los roles -->
+        <li class="nav-item" *ngIf="isEncargado() || isAnalista() || isAdmin()">
+          <a [routerLink]="['/dashboard/products']" routerLinkActive="active" class="nav-link">📦 Productos</a>
+        </li>
+
+        <!-- Solo para Analista y Administrador -->
+        <li class="nav-item" *ngIf="isAnalista() || isAdmin()">
+          <a [routerLink]="['/dashboard/customers']" routerLinkActive="active" class="nav-link">👥 Clientes</a>
+        </li>
+
+        <!-- Para todos los roles -->
+        <li class="nav-item" *ngIf="isEncargado() || isAnalista() || isAdmin()">
+          <a [routerLink]="['/dashboard/employees']" routerLinkActive="active" class="nav-link">🧑‍💼 Empleados</a>
+        </li>
+
+        <!-- Para todos los roles -->
+        <li class="nav-item" *ngIf="isEncargado() || isAnalista() || isAdmin()">
+          <a [routerLink]="['/dashboard/categories']" routerLinkActive="active" class="nav-link">🏷️ Categorías</a>
+        </li>
+
+        <!-- Solo para Analista y Administrador -->
+        <li class="nav-item" *ngIf="isAnalista() || isAdmin()">
+          <a [routerLink]="['/dashboard/regions']" routerLinkActive="active" class="nav-link">🗺️ Regiones</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Botón de cerrar sesión -->
+    <button class="btn btn-outline-danger mt-4" (click)="logout()">🚪 Cerrar sesión</button>
   </div>
 
   <!-- Contenido principal -->

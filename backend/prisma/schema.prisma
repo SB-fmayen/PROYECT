@@ -75,9 +75,10 @@ model region {
 
 model rol {
   id      Int      @id @default(autoincrement())
-  nombre  nombre_rol @unique
+  nombre  String   @unique
   usuarios usuario[]
 }
+
 
 model sala_venta {
   id          String   @id @default(uuid())
@@ -149,13 +150,6 @@ model usuario {
 }
 
 // ===================== ENUMS EN ESPAÑOL =====================
-
-enum nombre_rol {
-  ADMIN
-  GERENTE
-  ANALISTA
-  USUARIO
-}
 
 enum departamento_empleado {
   VENTAS
