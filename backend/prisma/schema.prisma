@@ -13,11 +13,11 @@ datasource db {
 // ===================== MODELOS EN ESPAÑOL =====================
 
 model categoria {
-  id          String     @id
-  nombre      String
-  creadoEn    DateTime   @default(now())
-  actualizadoEn DateTime
-  productos   producto[]
+  id             String     @id @default(uuid())
+  nombre         String
+  creadoEn       DateTime   @default(now())
+  actualizadoEn  DateTime   @updatedAt
+  productos      producto[]
 }
 
 model cliente {
@@ -149,7 +149,8 @@ model usuario {
   @@index([rolId])
 }
 
-// ===================== ENUMS EN ESPAÑOL =====================
+
+// Enums reestructurados
 
 enum departamento_empleado {
   VENTAS

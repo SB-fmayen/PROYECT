@@ -40,11 +40,25 @@ export class SalesService {
 
   getAllSales(filtro: any): Observable<Sale[]> {
     let params = new HttpParams();
-    Object.entries(filtro).forEach(([k, v]) => {
-      if (v !== '' && v != null) {
-        params = params.set(k, String(v));
+
+    Object.entries(filtro).forEach(([key, value]) => {
+      if (value !== '' && value != null) {
+        if (key === 'fromDate' && typeof value === 'string') {
+          try {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+              const iso = date.toISOString().split('T')[0]; // YYYY-MM-DD
+              params = params.set('fromDate', iso);
+            }
+          } catch (error) {
+            console.warn('Fecha inválida:', value);
+          }
+        } else {
+          params = params.set(key, String(value));
+        }
       }
     });
+
     return this.http.get<Sale[]>(this.apiUrl, { params });
   }
 
@@ -55,12 +69,11 @@ export class SalesService {
   uploadFile(file: File): Observable<HttpEvent<any>> {
     const form = new FormData();
     form.append('file', file);
-    const req = new HttpRequest(
-      'POST',
-      `${this.apiUrl}/upload`,
-      form,
-      { reportProgress: true }
-    );
+
+    const req = new HttpRequest('POST', `${this.apiUrl}/upload`, form, {
+      reportProgress: true
+    });
+
     return this.http.request(req);
   }
 }
