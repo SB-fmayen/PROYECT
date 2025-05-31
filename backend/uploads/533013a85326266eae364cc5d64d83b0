@@ -1,0 +1,4 @@
+id,fechaVenta,productoId,clienteId,empleadoId,cantidad,precioUnitario,total,descuento,metodoPago,regionId
+vnt-001,2025-05-01T10:00:00,prd-001,cli-001,emp-001,2,50,100,0,Efectivo,reg-1
+vnt-002,2025-05-01T11:30:00,prd-002,cli-002,emp-001,1,75,75,5,Débito,reg-2
+vnt-003,2025-05-02T14:15:00,prd-003,cli-003,emp-002,3,30,90,10,Crédito,reg-3

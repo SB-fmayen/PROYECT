@@ -25,12 +25,8 @@
         <input class="form-control" [(ngModel)]="filtro.id" (input)="loadSales()" />
       </div>
       <div class="col-md-4">
-        <label>Desde</label>
+        <label>Fecha</label>
         <input type="date" class="form-control" [(ngModel)]="filtro.fromDate" (change)="loadSales()" />
-      </div>
-      <div class="col-md-4">
-        <label>Hasta</label>
-        <input type="date" class="form-control" [(ngModel)]="filtro.toDate" (change)="loadSales()" />
       </div>
       <div class="col-md-4">
         <label>Producto</label>

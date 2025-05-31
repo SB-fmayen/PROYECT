@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './layout/dashboard/dashboard.component';
-
 export const routes: Routes = [
   {
     path: '',
@@ -51,7 +50,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/regions/regions.component').then(m => m.RegionsComponent),
       },
-    
+      {
+  path: 'powerbi',
+  loadComponent: () =>
+    import('./pages/powerbi/dashboard/powerbi.component').then(m => m.PowerbiComponent),
+}
+
     ],
   },
 ];

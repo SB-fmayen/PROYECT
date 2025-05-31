@@ -13,11 +13,11 @@ datasource db {
 // ===================== MODELOS EN ESPAÑOL =====================
 
 model categoria {
-  id          String     @id
-  nombre      String
-  creadoEn    DateTime   @default(now())
-  actualizadoEn DateTime
-  productos   producto[]
+  id             String     @id @default(uuid())
+  nombre         String
+  creadoEn       DateTime   @default(now())
+  actualizadoEn  DateTime   @updatedAt
+  productos      producto[]
 }
 
 model cliente {
@@ -75,9 +75,10 @@ model region {
 
 model rol {
   id      Int      @id @default(autoincrement())
-  nombre  nombre_rol @unique
+  nombre  String   @unique
   usuarios usuario[]
 }
+
 
 model sala_venta {
   id          String   @id @default(uuid())
@@ -148,14 +149,8 @@ model usuario {
   @@index([rolId])
 }
 
-// ===================== ENUMS EN ESPAÑOL =====================
 
-enum nombre_rol {
-  ADMIN
-  GERENTE
-  ANALISTA
-  USUARIO
-}
+// Enums reestructurados
 
 enum departamento_empleado {
   VENTAS

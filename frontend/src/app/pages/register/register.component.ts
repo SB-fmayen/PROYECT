@@ -46,6 +46,7 @@ export class RegisterComponent {
       name: this.name.trim(),
       email: this.email.trim(),
       password: this.password.trim()
+      // No se envía el rolId
     }).subscribe({
       next: () => {
         this.successMessage = '🎉 Registro exitoso, redirigiendo...';
