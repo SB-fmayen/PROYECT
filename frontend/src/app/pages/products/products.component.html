@@ -1,53 +1,59 @@
-<div class="container mt-4">
-  <h2 class="text-center mb-4 text-light">Productos registrados</h2>
-
-  <!-- Filtros -->
-  <div class="row g-2 mb-3 text-white">
-    <div class="col-md-3">
-      <label>Nombre</label>
-      <input class="form-control" [(ngModel)]="filtro.name" placeholder="Buscar por nombre" />
+<div class="products-container p-4 bg-light rounded-lg shadow-sm">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="page-title mb-0">Productos</h1>
+    <div class="d-flex align-items-center gap-2">
+      <input type="text" class="form-control" placeholder="Buscar productos por nombre o categoría..."
+             [(ngModel)]="filtro.name" (input)="filtrar()" />
+      <button class="btn btn-outline-secondary" (click)="toggleFilters()">
+        <i class="bi bi-filter"></i> Filtros
+      </button>
+      <button class="btn btn-outline-danger" (click)="exportToPDF()">
+        <i class="bi bi-file-earmark-pdf"></i> PDF
+      </button>
+      <button class="btn btn-outline-success" (click)="exportToExcel()">
+        <i class="bi bi-file-earmark-excel"></i> Excel
+      </button>
+      <button class="btn btn-primary" (click)="abrirAddModal()">Agregar Producto</button>
     </div>
+  </div>
 
-    <div class="col-md-2">
-      <label>Categoría</label>
-      <input class="form-control" [(ngModel)]="filtro.categoryId" placeholder="cat1, cat2..." />
+  <!-- Filtros emergentes -->
+  <div class="position-absolute end-0 mt-2 p-3 bg-white border rounded shadow"
+       [ngClass]="{ 'd-block animate__animated animate__fadeIn': showFilter, 'd-none': !showFilter }"
+       style="z-index: 1050; width: 350px;">
+    <div class="row g-2">
+      <div class="col-md-6">
+        <label>Categoría</label>
+        <input class="form-control" [(ngModel)]="filtro.categoryId" />
+      </div>
+      <div class="col-md-6">
+        <label>Precio Mínimo</label>
+        <input type="number" class="form-control" [(ngModel)]="filtro.minPrice" />
+      </div>
+      <div class="col-md-6">
+        <label>Precio Máximo</label>
+        <input type="number" class="form-control" [(ngModel)]="filtro.maxPrice" />
+      </div>
+      <div class="col-md-6">
+        <label>Desde</label>
+        <input type="date" class="form-control" [(ngModel)]="filtro.fechaInicio" />
+      </div>
+      <div class="col-md-6">
+        <label>Hasta</label>
+        <input type="date" class="form-control" [(ngModel)]="filtro.fechaFin" />
+      </div>
     </div>
-
-    <div class="col-md-2">
-      <label>Precio mínimo</label>
-      <input type="number" class="form-control" [(ngModel)]="filtro.minPrice" />
-    </div>
-
-    <div class="col-md-2">
-      <label>Precio máximo</label>
-      <input type="number" class="form-control" [(ngModel)]="filtro.maxPrice" />
-    </div>
-
-    <div class="col-md-3 d-flex gap-2 align-items-end">
-      <button class="btn btn-primary w-50" (click)="filtrar()">Filtrar</button>
-      <button class="btn btn-secondary w-50" (click)="limpiarFiltros()">Limpiar</button>
-    </div>
-
-    <div class="col-md-3">
-      <label>Desde</label>
-      <input type="date" class="form-control" [(ngModel)]="filtro.fechaInicio" />
-    </div>
-
-    <div class="col-md-3">
-      <label>Hasta</label>
-      <input type="date" class="form-control" [(ngModel)]="filtro.fechaFin" />
-    </div>
-
-    <div class="col-md-6 d-flex justify-content-end align-items-end gap-2">
-      <button class="btn btn-danger" (click)="exportToPDF()">Exportar a PDF</button>
-      <button class="btn btn-success" (click)="exportToExcel()">Exportar a Excel</button>
+    <div class="text-end mt-2">
+      <button class="btn btn-sm btn-link" (click)="limpiarFiltros()">Limpiar</button>
+      <button class="btn btn-sm btn-primary" (click)="filtrar()">Aplicar</button>
     </div>
   </div>
 
   <!-- Tabla -->
-  <div class="table-responsive">
-    <table class="table table-dark table-hover text-center rounded">
-      <thead>
+  <div class="table-responsive mt-3">
+    <table class="table table-striped table-hover bg-white rounded-bottom">
+      <thead class="table-light">
         <tr>
           <th>ID</th>
           <th>Nombre</th>
@@ -55,7 +61,8 @@
           <th>Precio Base</th>
           <th>Costo</th>
           <th>Margen</th>
-          <th>Fecha de Creación</th>
+          <th>Fecha Creación</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -67,8 +74,74 @@
           <td>{{ p.cost }}</td>
           <td>{{ p.margin }}</td>
           <td>{{ p.createdAt | date: 'dd/MM/yyyy' }}</td>
+          <td>
+            <i class="bi bi-pencil-fill text-primary me-2" role="button" (click)="abrirEditModal(p)"></i>
+            <i class="bi bi-trash-fill text-danger" role="button" (click)="abrirDeleteModal(p)"></i>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <!-- Modal Agregar Producto -->
+  <ng-template #addModal>
+    <div class="modal-header">
+      <h5 class="modal-title">Nuevo Producto</h5>
+      <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+    </div>
+    <div class="modal-body">
+      <form #productForm="ngForm">
+        <div class="row g-2">
+          <div class="col-md-6"><label>Nombre</label><input name="name" class="form-control" [(ngModel)]="newProduct.name" required /></div>
+          <div class="col-md-6"><label>Categoría</label><input name="categoryId" class="form-control" [(ngModel)]="newProduct.categoryId" required /></div>
+          <div class="col-md-4"><label>Precio Base</label><input type="number" name="basePrice" class="form-control" [(ngModel)]="newProduct.basePrice" required /></div>
+          <div class="col-md-4"><label>Costo</label><input type="number" name="cost" class="form-control" [(ngModel)]="newProduct.cost" required /></div>
+          <div class="col-md-4"><label>Margen</label><input type="number" name="margin" class="form-control" [(ngModel)]="newProduct.margin" /></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardarProducto()">Guardar</button>
+    </div>
+  </ng-template>
+
+  <!-- Modal Editar Producto -->
+  <ng-template #editModal>
+    <div class="modal-header">
+      <h5 class="modal-title">Editar Producto</h5>
+      <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="row g-2">
+          <div class="col-md-6"><label>ID</label><input class="form-control" [(ngModel)]="selectedProduct!.id" name="id" disabled /></div>
+          <div class="col-md-6"><label>Nombre</label><input class="form-control" [(ngModel)]="selectedProduct!.name" name="name" /></div>
+          <div class="col-md-6"><label>Categoría</label><input class="form-control" [(ngModel)]="selectedProduct!.categoryId" name="categoryId" /></div>
+          <div class="col-md-4"><label>Precio Base</label><input class="form-control" type="number" [(ngModel)]="selectedProduct!.basePrice" name="basePrice" /></div>
+          <div class="col-md-4"><label>Costo</label><input class="form-control" type="number" [(ngModel)]="selectedProduct!.cost" name="cost" /></div>
+          <div class="col-md-4"><label>Margen</label><input class="form-control" type="number" [(ngModel)]="selectedProduct!.margin" name="margin" /></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardarEdicion()">Guardar</button>
+    </div>
+  </ng-template>
+
+  <!-- Modal Confirmar Eliminación -->
+  <ng-template #deleteModal>
+    <div class="modal-header">
+      <h5 class="modal-title">Eliminar Producto</h5>
+      <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas eliminar este producto?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-danger" (click)="confirmarBorrado()">Eliminar</button>
+    </div>
+  </ng-template>
 </div>

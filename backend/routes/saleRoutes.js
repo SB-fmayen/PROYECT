@@ -1,11 +1,14 @@
-// 📁 backend/routes/saleRoutes.js
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const upload = require('../middleware/uploadMiddleware');
+const path = require('path');
+
 const saleController = require('../controllers/saleController');
 
 router.get('/', saleController.getSales);
-router.post('/upload', upload.single('file'), saleController.uploadCSV);
+router.post('/upload/csv', upload.single('archivo'), saleController.uploadCSV);
+router.post('/upload/xlsx', upload.single('archivo'), saleController.uploadXLSX);
+router.post('/upload/pdf', upload.single('archivo'), saleController.uploadPDF);
 
-module.exports = router;
+
+module.exports = router; // ✅ Exportación correcta

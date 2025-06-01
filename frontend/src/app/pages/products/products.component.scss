@@ -1,82 +1,110 @@
 :host {
   display: block;
   padding: 2rem;
-  background: radial-gradient(circle at top left, #002b11, #003300);
+  background-color: #f8f9fa;
   border-radius: 1rem;
-  color: white;
 }
 
-h2 {
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow: 0 0 5px #00ff88;
-  animation: fadeInDown 0.6s ease-out;
+h2.page-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
-input.form-control,
-select.form-control {
+.filter-popover {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 350px;
+  z-index: 1050;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: fadeIn ease 0.3s;
+}
+
+.table {
+  background-color: #ffffff;
   border-radius: 12px;
-  border: 1px solid #2ecc71;
-  background-color: #1e1e1e;
-  color: white;
-  transition: 0.2s ease-in-out;
+  overflow: hidden;
 
-  &:focus {
-    border-color: #27ae60;
-    box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+  th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+  }
+
+  td, th {
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  tbody tr:hover {
+    background-color: #f6f6f6;
   }
 }
 
 button.btn {
+  border-radius: 10px;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  transition: all 0.2s ease-in-out;
+}
+
+button.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+}
+
+input.form-control {
   border-radius: 8px;
-  font-weight: 600;
-  transition: 0.2s ease-in-out;
-  animation: fadeInUp 0.3s ease-in-out;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 255, 140, 0.4);
-  }
+  border: 1px solid #ced4da;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
-.table {
-  border-radius: 1rem;
-  overflow: hidden;
-
-  th, td {
-    vertical-align: middle;
-    font-size: 0.95rem;
-    transition: background-color 0.3s;
-  }
-
-  thead {
-    background-color: #006633;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  tbody tr:hover {
-    background-color: #004d26;
-  }
+input.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-@keyframes fadeInDown {
-  0% {
+.acciones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icono-editar {
+  color: #0d6efd;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icono-editar:hover {
+  transform: scale(1.1);
+  color: #0b5ed7;
+}
+
+.icono-eliminar {
+  color: #dc3545;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icono-eliminar:hover {
+  transform: scale(1.1);
+  color: #bb2d3b;
+}
+
+@keyframes fadeIn {
+  from {
     opacity: 0;
     transform: translateY(-10px);
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
   }

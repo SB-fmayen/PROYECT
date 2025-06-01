@@ -8,6 +8,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-sales',
@@ -36,17 +37,22 @@ export class SalesComponent implements OnInit {
     cantidad: 1, precioUnitario: 0, total: 0, descuento: 0, metodoPago: '', regionId: ''
   };
 
+  selectedSale: Sale | null = null;
+
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('addModal', { static: false }) addModal!: ElementRef;
+  @ViewChild('uploadModal', { static: false }) uploadModal!: ElementRef;
+  @ViewChild('editModal', { static: false }) editModal!: ElementRef;
+  @ViewChild('deleteModal', { static: false }) deleteModal!: ElementRef;
 
-  constructor(private svc: SalesService, public modal: NgbModal) {}
+  constructor(private salesService: SalesService, public modal: NgbModal) {}
 
   ngOnInit(): void {
     this.loadSales();
   }
 
   loadSales(): void {
-    this.svc.getAllSales(this.filtro).subscribe(data => this.sales = data);
+    this.salesService.getAllSales(this.filtro).subscribe(data => this.sales = data);
   }
 
   clearFilters(): void {
@@ -64,20 +70,75 @@ export class SalesComponent implements OnInit {
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
-    this.uploadProgress = 0;
-    this.svc.uploadFile(file).subscribe(evt => {
-      if (evt.type === HttpEventType.UploadProgress && evt.total) {
-        this.uploadProgress = Math.round(100 * evt.loaded / evt.total);
-      } else if (evt.type === HttpEventType.Response) {
-        this.uploadProgress = -1;
-        this.loadSales();
+
+    const extension = file.name.split('.').pop()?.toLowerCase();
+
+    switch (extension) {
+      case 'csv':
+      case 'xlsx':
+      case 'pdf':
+        this.uploadFile(file, extension);
+        break;
+      default:
+        alert('Formato no soportado. Solo se permiten archivos CSV, XLSX y PDF.');
+    }
+  }
+
+uploadFile(file: File, type: string): void {
+  this.salesService.uploadFile(file, type).subscribe({
+    next: (res: any) => {
+      console.log('✅ Archivo cargado:', res);
+
+      // Verifica si el mensaje del backend indica éxito
+      if (
+        res.message?.includes('exitosamente') ||
+        res.message?.includes('insertadas')
+      ) {
+        this.loadSales(); // Recargar la tabla
+      } else {
+        alert('Archivo cargado pero sin datos válidos.');
       }
-    });
+
+      // Cerrar modal si está abierto y resetear progreso
+      this.modal.dismissAll();
+      this.uploadProgress = -1;
+    },
+    error: (err: any) => {
+      console.error('❌ Error al subir archivo:', err);
+      alert('Error al subir archivo. Revisa el formato o intenta nuevamente.');
+      this.uploadProgress = -1;
+    }
+  });
+}
+
+
+  allowDrop(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  handleFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      const type = extension === 'csv' || extension === 'xlsx' || extension === 'pdf' ? extension : 'csv';
+
+      this.uploadProgress = 0;
+      this.salesService.uploadFile(file, type).subscribe(evt => {
+        if (evt.type === HttpEventType.UploadProgress && evt.total) {
+          this.uploadProgress = Math.round(100 * evt.loaded / evt.total);
+        } else if (evt.type === HttpEventType.Response) {
+          this.uploadProgress = -1;
+          this.loadSales();
+          this.modal.dismissAll();
+        }
+      });
+    }
   }
 
   exportToPDF(): void {
     const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'A4' });
-    const head = [['ID','Fecha','Prod','Cli','Emp','Cant','Precio U.','Total']];
+    const head = [['ID', 'Fecha', 'Prod', 'Cli', 'Emp', 'Cant', 'Precio U.', 'Total']];
     const body = this.sales.map(s => [
       s.id,
       new Date(s.fechaVenta).toLocaleString(),
@@ -113,8 +174,12 @@ export class SalesComponent implements OnInit {
     this.modal.open(this.addModal, { size: 'lg' });
   }
 
+  openUploadModal(): void {
+    this.modal.open(this.uploadModal, { centered: true });
+  }
+
   calcularTotal(): void {
-    this.newSale.total = 
+    this.newSale.total =
       (this.newSale.cantidad * this.newSale.precioUnitario) - (this.newSale.descuento ?? 0);
   }
 
@@ -130,10 +195,10 @@ export class SalesComponent implements OnInit {
       return;
     }
 
-    this.newSale.total = 
+    this.newSale.total =
       (this.newSale.cantidad * this.newSale.precioUnitario) - (this.newSale.descuento ?? 0);
 
-    this.svc.createSale(this.newSale).subscribe({
+    this.salesService.createSale(this.newSale).subscribe({
       next: () => {
         this.modal.dismissAll();
         this.loadSales();
@@ -142,6 +207,44 @@ export class SalesComponent implements OnInit {
       error: err => {
         console.error('Error al guardar venta:', err);
         alert('Ocurrió un error al guardar la venta.');
+      }
+    });
+  }
+
+  editarVenta(sale: Sale): void {
+    this.selectedSale = { ...sale };
+    this.modal.open(this.editModal, { size: 'lg' });
+  }
+
+  guardarEdicion(): void {
+    if (!this.selectedSale) return;
+    this.salesService.updateSale(this.selectedSale.id, this.selectedSale).subscribe({
+      next: () => {
+        this.modal.dismissAll();
+        this.loadSales();
+      },
+      error: err => {
+        console.error('Error al actualizar venta:', err);
+        alert('Ocurrió un error al actualizar la venta.');
+      }
+    });
+  }
+
+  abrirDeleteModal(sale: Sale): void {
+    this.selectedSale = sale;
+    this.modal.open(this.deleteModal, { centered: true });
+  }
+
+  confirmarBorrado(): void {
+    if (!this.selectedSale) return;
+    this.salesService.deleteSale(this.selectedSale.id).subscribe({
+      next: () => {
+        this.modal.dismissAll();
+        this.loadSales();
+      },
+      error: err => {
+        console.error('Error al eliminar venta:', err);
+        alert('No se pudo eliminar la venta.');
       }
     });
   }
