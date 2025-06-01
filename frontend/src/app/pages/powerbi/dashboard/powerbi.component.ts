@@ -9,7 +9,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class PowerbiComponent {
   embedUrl: SafeResourceUrl;
 
-  private rawUrl = 'https://app.powerbi.com/view?r=eyJrIjoiYTExMzY3MjQtMGMyZC00MjUwLWJiYmMtZDI2Nzk1MzFmOTQ3IiwidCI6IjVmNTNiNGNlLTYzZDQtNGVlOC04OGQyLTIyZjBiMmQ0YjI3YSIsImMiOjR9'; // <- TU URL REAL
+  private rawUrl = 'https://app.powerbi.com/view?r=eyJrIjoiNGEyMjJkZDMtM2M0Yy00Njc5LTgwNjItZDdjZGYxODFkOTE0IiwidCI6IjVmNTNiNGNlLTYzZDQtNGVlOC04OGQyLTIyZjBiMmQ0YjI3YSIsImMiOjR9';
+ // <- TU URL REAL
 
   constructor(private sanitizer: DomSanitizer) {
     this.embedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.rawUrl);
