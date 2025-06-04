@@ -176,7 +176,11 @@ exports.uploadPDF = async (req, res) => {
 
     fs.writeFileSync(pdfPath, file.buffer);
 
-    const popplerPath = `"C:\\Users\\jerka\\Downloads\\poppler-24.08.0\\Library\\bin\\pdftotext.exe"`;
+    // Permitir configurar la ruta al binario de pdftotext mediante una variable
+    // de entorno para evitar rutas hardcodeadas que puedan fallar en otros
+    // entornos. Si no se especifica, se asume que `pdftotext` está disponible
+    // en el PATH del sistema.
+    const popplerPath = process.env.PDFTOTEXT_PATH || 'pdftotext';
 
     exec(`${popplerPath} "${pdfPath}" "${txtPath}"`, async (error) => {
       if (error) {
