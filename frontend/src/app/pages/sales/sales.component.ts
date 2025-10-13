@@ -18,15 +18,16 @@ import * as FileSaver from 'file-saver';
 })
 export class SalesComponent implements OnInit {
   sales: Sale[] = [];
+
   filtro = {
     search: '',
     id: '',
     fromDate: '',
-    toDate: '',
     productoId: '',
     clienteId: '',
     empleadoId: ''
   };
+
   showFilter = false;
   uploadProgress = -1;
 
@@ -53,7 +54,6 @@ export class SalesComponent implements OnInit {
       search: '',
       id: '',
       fromDate: '',
-      toDate: '',
       productoId: '',
       clienteId: '',
       empleadoId: ''
@@ -113,12 +113,36 @@ export class SalesComponent implements OnInit {
     this.modal.open(this.addModal, { size: 'lg' });
   }
 
+  calcularTotal(): void {
+    this.newSale.total = 
+      (this.newSale.cantidad * this.newSale.precioUnitario) - (this.newSale.descuento ?? 0);
+  }
+
   saveSale(form: NgForm): void {
     if (form.invalid) return;
-    this.svc.createSale(this.newSale).subscribe(() => {
-      this.modal.dismissAll();
-      this.loadSales();
-      form.resetForm();
+
+    if (
+      this.newSale.cantidad <= 0 ||
+      this.newSale.precioUnitario <= 0 ||
+      (this.newSale.descuento ?? 0) < 0
+    ) {
+      alert('Por favor verifica que los valores sean válidos (cantidad, precio, descuento).');
+      return;
+    }
+
+    this.newSale.total = 
+      (this.newSale.cantidad * this.newSale.precioUnitario) - (this.newSale.descuento ?? 0);
+
+    this.svc.createSale(this.newSale).subscribe({
+      next: () => {
+        this.modal.dismissAll();
+        this.loadSales();
+        form.resetForm();
+      },
+      error: err => {
+        console.error('Error al guardar venta:', err);
+        alert('Ocurrió un error al guardar la venta.');
+      }
     });
   }
 }

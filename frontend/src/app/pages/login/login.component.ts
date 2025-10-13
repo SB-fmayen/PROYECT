@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  standalone: true, 
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -34,7 +35,7 @@ export class LoginComponent {
           localStorage.setItem('user', JSON.stringify(res.user));
 
           // ✅ Redirige a /dashboard/usuarios (corregido)
-          this.router.navigate(['/dashboard/users']);
+          this.router.navigate(['/dashboard']);
         } else {
           this.errorMessage = 'Token no recibido del servidor.';
         }
