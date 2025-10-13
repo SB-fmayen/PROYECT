@@ -9,8 +9,9 @@
       <button class="btn btn-outline-secondary" (click)="showFilter = !showFilter">
         <i class="bi bi-filter"></i> Filtros
       </button>
-      <input type="file" #fileInput hidden (change)="onFileSelected($event)" />
-      <button class="btn btn-outline-primary" (click)="fileInput.click()">CSV</button>
+      <button class="btn btn-outline-info" (click)="openUploadModal()">
+        <i class="bi bi-upload"></i> Cargar Archivo
+      </button>
       <button class="btn btn-outline-dark" (click)="exportToExcel()">Excel</button>
       <button class="btn btn-outline-danger" (click)="exportToPDF()">PDF</button>
       <button class="btn btn-primary" (click)="openAddModal()">Agregar Venta</button>
@@ -18,7 +19,11 @@
   </div>
 
   <!-- Filtros -->
-  <div *ngIf="showFilter" class="filter-popover p-3 bg-white border rounded shadow mb-3">
+<div
+  class="position-absolute end-0 mt-2 p-3 bg-white border rounded shadow"
+  [ngClass]="{ 'd-block': showFilter, 'd-none': !showFilter }"
+  style="z-index: 1050; width: 350px;"
+>
     <div class="row g-2">
       <div class="col-md-4">
         <label>ID Venta</label>
@@ -51,29 +56,43 @@
   <div *ngIf="uploadProgress >= 0" class="progress mb-3">
     <div class="progress-bar" [style.width.%]="uploadProgress">{{ uploadProgress }}%</div>
   </div>
+<!-- Tabla -->
+<div class="table-responsive">
+  <table class="table table-striped table-hover bg-white rounded-bottom">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Prod.</th>
+        <th>Cli.</th>
+        <th>Emp.</th>
+        <th>Cant.</th>
+        <th>Precio U.</th>
+        <th>Total</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+   <tr *ngFor="let s of sales">
+  <td>{{ s.id }}</td>
+  <td>{{ s.fechaVenta | date:'short' }}</td>
+  <td>{{ s.productoId }}</td>
+  <td>{{ s.clienteId }}</td>
+  <td>{{ s.empleadoId }}</td>
+  <td>{{ s.cantidad }}</td>
+  <td>{{ s.precioUnitario }}</td>
+  <td>{{ s.total }}</td>
+  <td>
+  <i class="bi bi-pencil-fill text-primary me-2" role="button" (click)="editarVenta(s)"></i>
+  <i class="bi bi-trash-fill text-danger" role="button" (click)="abrirDeleteModal(s)"></i>
 
-  <!-- Tabla -->
-  <div class="table-responsive">
-    <table class="table table-striped table-hover bg-white rounded-bottom">
-      <thead class="table-light">
-        <tr>
-          <th>ID</th><th>Fecha</th><th>Prod.</th><th>Cli.</th><th>Emp.</th><th>Cant.</th><th>Precio U.</th><th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let s of sales">
-          <td>{{ s.id }}</td>
-          <td>{{ s.fechaVenta | date:'short' }}</td>
-          <td>{{ s.productoId }}</td>
-          <td>{{ s.clienteId }}</td>
-          <td>{{ s.empleadoId }}</td>
-          <td>{{ s.cantidad }}</td>
-          <td>{{ s.precioUnitario }}</td>
-          <td>{{ s.total }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+
+  </td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
 
   <!-- Modal Alta -->
   <ng-template #addModal>
@@ -103,4 +122,75 @@
       <button class="btn btn-primary" [disabled]="saleForm.invalid" (click)="saveSale(saleForm)">Guardar</button>
     </div>
   </ng-template>
+
+  <!-- Modal Cargar Archivo -->
+  <ng-template #uploadModal>
+    <div class="modal-header">
+      <h5 class="modal-title">📤 Cargar archivo de ventas</h5>
+      <button type="button" class="btn-close" (click)="modal.dismissAll()"></button>
+    </div>
+    <div class="modal-body">
+      <div
+        class="border border-dashed rounded p-4 text-center"
+        (drop)="handleFileDrop($event)"
+        (dragover)="allowDrop($event)"
+      >
+        <i class="bi bi-file-earmark-arrow-up fs-1 text-primary"></i>
+        <p class="mt-2">Arrastra y suelta tu archivo aquí o usa el botón inferior</p>
+        <input type="file" #fileInput hidden (change)="onFileSelected($event)" />
+        <button class="btn btn-outline-primary mt-2" (click)="fileInput.click()">Seleccionar archivo</button>
+      </div>
+
+      <div *ngIf="uploadProgress >= 0" class="progress mt-3">
+        <div class="progress-bar" [style.width.%]="uploadProgress">{{ uploadProgress }}%</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="modal.dismissAll()">Cancelar</button>
+      <button class="btn btn-primary" (click)="onFileSelected($event)">Subir</button>
+    </div>
+  </ng-template>
+  <!-- Modal Editar Venta -->
+<ng-template #editModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Editar Venta</h5>
+    <button type="button" class="btn-close" (click)="modal.dismissAll()"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row g-2">
+        <div class="col-md-4"><label>ID Venta</label><input class="form-control" [(ngModel)]="selectedSale!.id" name="id" disabled /></div>
+        <div class="col-md-4"><label>Fecha</label><input class="form-control" type="datetime-local" [(ngModel)]="selectedSale!.fechaVenta" name="fechaVenta" /></div>
+        <div class="col-md-4"><label>Producto</label><input class="form-control" [(ngModel)]="selectedSale!.productoId" name="productoId" /></div>
+        <div class="col-md-4"><label>Cliente</label><input class="form-control" [(ngModel)]="selectedSale!.clienteId" name="clienteId" /></div>
+        <div class="col-md-4"><label>Empleado</label><input class="form-control" [(ngModel)]="selectedSale!.empleadoId" name="empleadoId" /></div>
+        <div class="col-md-4"><label>Cantidad</label><input class="form-control" type="number" [(ngModel)]="selectedSale!.cantidad" name="cantidad" /></div>
+        <div class="col-md-4"><label>Precio U.</label><input class="form-control" type="number" [(ngModel)]="selectedSale!.precioUnitario" name="precioUnitario" /></div>
+        <div class="col-md-4"><label>Descuento</label><input class="form-control" type="number" [(ngModel)]="selectedSale!.descuento" name="descuento" /></div>
+        <div class="col-md-4"><label>Método Pago</label><input class="form-control" [(ngModel)]="selectedSale!.metodoPago" name="metodoPago" /></div>
+        <div class="col-md-4"><label>Región</label><input class="form-control" [(ngModel)]="selectedSale!.regionId" name="regionId" /></div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="modal.dismissAll()">Cancelar</button>
+    <button class="btn btn-primary" (click)="guardarEdicion()">Guardar</button>
+  </div>
+</ng-template>
+
+<!-- Modal Confirmar Eliminación -->
+<ng-template #deleteModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Eliminar Venta</h5>
+    <button type="button" class="btn-close" (click)="modal.dismissAll()"></button>
+  </div>
+  <div class="modal-body">
+    <p>¿Estás seguro de que deseas eliminar esta venta?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="modal.dismissAll()">Cancelar</button>
+    <button class="btn btn-danger" (click)="confirmarBorrado()">Eliminar</button>
+  </div>
+</ng-template>
+
 </div>

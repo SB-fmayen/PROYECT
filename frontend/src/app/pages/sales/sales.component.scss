@@ -24,3 +24,15 @@
     height: 20px;
   }
 }
+
+.filter-popover {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+  &.d-block {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+}

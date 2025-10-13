@@ -1,15 +1,15 @@
-// backend/middleware/uploadMiddleware.js
+ // 📁 backend/middleware/uploadMiddleware.js
 const multer = require('multer');
-const path = require('path');
 
-// Guardamos el archivo en memoria para procesarlo desde buffer
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage(); // usamos buffer en memoria
 
-// Aceptar solo CSV
 const fileFilter = (req, file, cb) => {
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (ext === '.csv') cb(null, true);
-  else cb(new Error('Solo se permiten archivos .csv'), false);
+  const ext = file.originalname.toLowerCase();
+  if (ext.endsWith('.csv') || ext.endsWith('.xlsx') || ext.endsWith('.pdf')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Solo se permiten archivos CSV, XLSX o PDF'), false);
+  }
 };
 
 module.exports = multer({ storage, fileFilter });

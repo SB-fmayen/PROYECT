@@ -42,4 +42,18 @@ export class ProductsService {
 
     return this.http.get<Product[]>(this.baseUrl, { params });
   }
+
+createProduct(product: any): Observable<any> {
+  return this.http.post(this.baseUrl, product);
+}
+
+updateProduct(id: string, product: any): Observable<any> {
+  return this.http.put(`${this.baseUrl}/${id}`, product);
+}
+
+deleteProduct(id: string): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/${id}`);
+}
+
+
 }

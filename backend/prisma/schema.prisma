@@ -86,7 +86,6 @@ model sala_venta {
   descripcion String?
   creadoEn    DateTime @default(now())
   actualizadoEn DateTime @updatedAt
-  ventas      venta[]
 }
 
 model venta {
@@ -101,25 +100,21 @@ model venta {
   descuento      Float?
   metodoPago     metodo_pago
   regionId       String
-  salaVentaId    String
-  usuarioId      Int
   creadoEn       DateTime     @default(now())
   actualizadoEn  DateTime
+
   cliente        cliente      @relation(fields: [clienteId], references: [id])
   empleado       empleado     @relation(fields: [empleadoId], references: [id])
   producto       producto     @relation(fields: [productoId], references: [id])
   region         region       @relation(fields: [regionId], references: [id])
-  sala_venta     sala_venta   @relation(fields: [salaVentaId], references: [id])
-  usuario        usuario      @relation(fields: [usuarioId], references: [id])
 
   @@index([clienteId])
   @@index([empleadoId])
   @@index([productoId])
   @@index([regionId])
   @@index([fechaVenta])
-  @@index([usuarioId])
-  @@index([salaVentaId])
 }
+
 
 model sesion {
   id          Int      @id @default(autoincrement())
@@ -143,7 +138,6 @@ model usuario {
   actualizadoEn DateTime    @updatedAt
 
   rol           rol         @relation(fields: [rolId], references: [id])
-  ventas        venta[]
   sesiones      sesion[]
 
   @@index([rolId])

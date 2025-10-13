@@ -38,6 +38,14 @@
         <li class="nav-item" *ngIf="isAnalista() || isAdmin()">
           <a [routerLink]="['/dashboard/regions']" routerLinkActive="active" class="nav-link">🗺️ Regiones</a>
         </li>
+
+        <!-- Power BI solo para Administrador -->
+        <li class="nav-item">
+          <a [routerLink]="['/dashboard/powerbi']" routerLinkActive="active" class="nav-link">📈 Power BI</a>
+        </li>
+
+
+
       </ul>
     </div>
 

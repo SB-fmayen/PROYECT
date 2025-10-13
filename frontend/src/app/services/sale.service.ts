@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpRequest, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Sale {
@@ -50,8 +50,8 @@ export class SalesService {
               const iso = date.toISOString().split('T')[0]; // YYYY-MM-DD
               params = params.set('fromDate', iso);
             }
-          } catch (error) {
-            console.warn('Fecha inválida:', value);
+          } catch {
+            // Ignorar fecha inválida
           }
         } else {
           params = params.set(key, String(value));
@@ -66,14 +66,18 @@ export class SalesService {
     return this.http.post<Sale>(this.apiUrl, payload);
   }
 
-  uploadFile(file: File): Observable<HttpEvent<any>> {
-    const form = new FormData();
-    form.append('file', file);
+  updateSale(id: string, payload: Partial<Sale>): Observable<Sale> {
+    return this.http.put<Sale>(`${this.apiUrl}/${id}`, payload);
+  }
 
-    const req = new HttpRequest('POST', `${this.apiUrl}/upload`, form, {
-      reportProgress: true
-    });
+  deleteSale(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 
-    return this.http.request(req);
+  uploadFile(file: File, type: string): Observable<any> {
+    const formData = new FormData();
+    formData.append('archivo', file); // 👈🏻 campo correcto para que coincida con backend
+
+    return this.http.post(`${this.apiUrl}/upload/${type}`, formData);
   }
 }

@@ -1,0 +1,5 @@
+productoId: 1, clienteId: 2, empleadoId: 3, fechaVenta: 2024-05-10, cantidad: 1, precioUnitario: 120.00, total:
+
+productoId: 2, clienteId: 4, empleadoId: 5, fechaVenta: 2024-05-11, cantidad: 2, precioUnitario: 90.00, total: 1
+
+
