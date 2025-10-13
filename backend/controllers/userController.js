@@ -120,13 +120,14 @@ async function updateUsuario(req, res) {
         rolId:   Number(rolId),
         activo:  Boolean(activo),
       },
+      include: { rol: true },
     });
 
     res.json({
       id:           actualizado.id,
       nombre:       actualizado.nombre,
       correo:       actualizado.correo,
-      rol:          actualizado.rolId, // si quieres nombre, haz include: {rol:true}
+      rol:          actualizado.rol.nombre,
       activo:       actualizado.activo,
       creadoEn:     actualizado.creadoEn,
       actualizadoEn:actualizado.actualizadoEn,
